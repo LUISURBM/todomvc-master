@@ -1,0 +1,46 @@
+group "com.autentia.training"
+version "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    ext.junitPlatformVersion = "1.0.0"
+    ext.junitJupiterVersion = "5.0.0"
+    ext.seleniumVersion = "3.5.3"
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.junit.platform:junit-platform-gradle-plugin:$junitPlatformVersion"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "org.junit.platform.gradle.plugin"
+
+compileTestJava {
+    sourceCompatibility = 1.8
+}
+
+// Pass from the Gradle JVM to Java's JVM the system properties
+junitPlatformTest {
+    systemProperties project.properties.subMap(["env", "debug", "browser", "hub.url", "base.url"])
+}
+
+dependencies {
+    compile "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+    compile "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    compile "org.apache.commons:commons-lang3:3.1"
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testRuntime("org.junit.platform:junit-platform-runner:$junitPlatformVersion")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "4.2"
+}
